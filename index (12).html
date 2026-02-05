@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎂 Birthday Wish</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="card">
+    <h1 class="title">
+      <span class="emoji">🎉</span>
+      <span class="text">Happy Birthday Ngọc Vy</span>
+      <span class="emoji">🎉</span>
+    </h1>
+
+    <p class="message">
+      Chúc em tuổi mới có thật nhiều năng lượng để tiếp tục cố gắng trên con đường của mình.
+      Tuổi 18 là một cột mốc quan trọng của mỗi người, và anh hy vọng điều này có thể mang lại
+      cho em một chút động lực để tiến xa hơn nữa về phía trước 😎.
+      <br><br>
+      Vậy nha 8386 mãi đỉnh, thế thôi hẹ hẹ &lt;3&lt;3&lt;3
+      <br><br>
+      p/s: Chạm vào nến ikkk!!
+    </p>
+
+    <!-- BÁNH + NẾN -->
+    <div class="cake-area">
+      <img id="cakeImg" src="assets/cake_0.png" class="cake-img" alt="Birthday Cake" />
+
+      <!-- 3 vùng click trùng 3 cây nến -->
+      <button class="candle-btn" data-id="1" aria-label="Nến trái"></button>
+      <button class="candle-btn" data-id="2" aria-label="Nến giữa"></button>
+      <button class="candle-btn" data-id="3" aria-label="Nến phải"></button>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div id="wishModal" class="modal hidden" role="presentation">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="wishTitle">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span class="modal-icon" aria-hidden="true">💭</span>
+          <div>
+            <div id="wishTitle" class="modal-h">Những điều ước giản đơn mà ý nghĩa</div>
+            <div class="modal-sub">Nhập điều ước rồi bấm xác nhận nha</div>
+          </div>
+        </div>
+
+        <button id="closeModal" class="modal-close" aria-label="Đóng">✕</button>
+      </div>
+
+      <textarea id="modalWish" placeholder="Ước ở đây nekk..." maxlength="300"></textarea>
+
+      <div class="modal-actions">
+        <button id="cancelWish" class="btn-ghost" type="button">Suy nghĩ lại...</button>
+        <button id="confirmWish" class="btn-primary" type="button">✨ Ước rồi thì chọn cái nì</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- END SCENE (ẩn mặc định) -->
+  <div id="endScene" class="end-scene hidden" role="presentation" aria-hidden="true">
+    <div class="end-wrap">
+      <img src="assets/paper_airplane.gif" class="plane-gif" alt="Paper airplane" />
+
+      <div class="final-card">
+        <h2 class="final-title">💌 Manifest-inggg.....</h2>
+        <p class="final-text">
+          Điều ước của em đã được gửi lên vũ trụ, hãy tiếp tục cố gắng mỗi ngày và anh tin rằng nó sẽ thành hiện thực thôi...(trừ việc thắng anh set đơn)
+        </p>
+        <button id="closeEndScene" class="final-btn" type="button">Đã rõ...</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

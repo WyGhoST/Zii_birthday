@@ -1,0 +1,324 @@
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ffd6e0, #fff3b0);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 0;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* khóa scroll nền khi modal mở */
+body.modal-open {
+  overflow: hidden;
+}
+
+.card {
+  background: white;
+  width: 480px;
+  max-width: 95vw;
+  padding: 40px 32px;
+  border-radius: 32px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+  text-align: center;
+}
+
+h1.title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+  text-align: center;
+}
+
+h1.title .emoji { font-size: 28px; line-height: 1; }
+h1.title .text { display: inline-block; }
+
+.message {
+  margin: 20px 0 30px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: #444;
+  padding: 0 10px;
+}
+
+.cake-area {
+  position: relative;
+  width: 400px;
+  margin: 28px auto 0;
+  aspect-ratio: 1 / 1;
+}
+
+.cake-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* HITBOX nến - trong suốt */
+.candle-btn {
+  position: absolute;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+/* trạng thái đang chọn, CHƯA confirm */
+.candle-btn.pending {
+  opacity: 0.4;
+}
+
+/* trạng thái đã “tắt thật” (đã confirm) */
+.candle-btn.off {
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.candle-btn[data-id="2"] {
+  left: 48.6%;
+  top: 36%;
+  width: 14%;
+  height: 22%;
+  transform: translate(-50%, -50%);
+}
+
+.candle-btn[data-id="1"] {
+  left: 23.4%;
+  top: 47%;
+  width: 12%;
+  height: 28%;
+  transform: translate(-50%, -50%);
+}
+
+.candle-btn[data-id="3"] {
+  left: 76.4%;
+  top: 47%;
+  width: 12%;
+  height: 28%;
+  transform: translate(-50%, -50%);
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal.hidden { display: none; }
+
+.modal-box {
+  width: 380px;
+  max-width: 92vw;
+  border-radius: 24px;
+  padding: 18px 18px 16px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+  text-align: left;
+}
+
+.modal-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom: 12px;
+}
+
+.modal-title{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+.modal-icon{ font-size: 22px; line-height: 1; }
+
+.modal-h{
+  font-size:20px;
+  font-weight:900;
+  line-height: 1.2;
+}
+
+.modal-sub{
+  font-size:13px;
+  opacity:.75;
+  margin-top:2px;
+}
+
+.modal-close{
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  font-size:18px;
+  opacity:.75;
+  padding: 6px 8px;
+  border-radius: 10px;
+}
+
+.modal-close:hover{ background: rgba(0,0,0,0.06); }
+
+.modal-box textarea {
+  width: 100%;
+  height: 92px;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.12);
+  padding: 12px 14px;
+  outline: none;
+  font-size: 15px;
+  line-height: 1.5;
+  background: white;
+  resize: none;
+}
+.modal-box textarea:focus{
+  border-color: rgba(255,111,145,0.65);
+  box-shadow: 0 0 0 4px rgba(255,111,145,0.18);
+}
+
+.modal-actions{
+  display:flex;
+  gap:12px;
+  margin-top:14px;
+}
+
+.btn-ghost{
+  flex:1;
+  padding: 12px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: white;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.btn-primary{
+  flex:1.2;
+  padding: 12px 14px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #ff6f91, #ff8fb3);
+  color: white;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+/* FIX FONT BUTTON */
+button,
+input,
+textarea {
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.btn-ghost,
+.btn-primary {
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+/* KITE (nếu bạn có launchKite()) */
+.kite {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  font-size: 32px;
+  animation: fly 4s ease-out forwards;
+  z-index: 1200;
+}
+@keyframes fly {
+  to { transform: translate(-50%, -100vh); opacity: 0; }
+}
+
+/* END SCENE */
+.end-scene {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.end-scene.hidden {
+  display: none;
+}
+
+.end-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
+}
+
+.plane-gif {
+  width: 350px;
+  max-width: 70vw;
+}
+
+/* Card cuối */
+.final-card {
+  width: 420px;
+  max-width: 92vw;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  border-radius: 28px;
+  padding: 22px 20px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.30);
+
+  text-align: center;
+}
+
+.final-title {
+  margin: 0 0 10px;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.final-text {
+  margin: 0 0 16px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  opacity: 0.95;
+}
+
+.final-btn {
+  border: none;
+  cursor: pointer;
+  padding: 12px 16px;
+  border-radius: 999px;
+  font-weight: 900;
+  color: white;
+  background: linear-gradient(135deg, #ff6f91, #ff8fb3);
+  width: 100%;
+}
+
+/* mobile */
+@media (max-width: 480px) {
+  h1.title { font-size: 26px; }
+  .card { padding: 32px 20px; }
+  .message { font-size: 16px; }
+  .cake-area { width: 240px; }
+  .plane-gif { width: 140px; }
+  .final-card { padding: 18px 16px; border-radius: 22px; }
+  .final-title { font-size: 18px; }
+}
