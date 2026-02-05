@@ -156,23 +156,28 @@ closeEndSceneBtn?.addEventListener("click", hideEndScene);
 
 // ===== Gửi email tổng 3 điều ước =====
 async function sendWishesEmail(wishes) {
-  if (!EMAIL_ENDPOINT || EMAIL_ENDPOINT.includes("/XXXX/")) {
-    console.warn("Chưa set EMAIL_ENDPOINT /exec");
-    return;
-  }
+  if (!EMAIL_ENDPOINT || EMAIL_ENDPOINT.includes("/XXXX/")) return;
 
-  // chống gửi nhiều lần (chỉ trong 1 phiên)
   if (sessionStorage.getItem("email_sent") === "1") return;
   sessionStorage.setItem("email_sent", "1");
 
-  const text = wishes.map((w, i) => `Điều ước ${i + 1}: ${w.text}`).join("\n");
+  const text = wishes
+    .map((w, i) => `Điều ước ${i + 1}: ${w.text}`)
+    .join("\n");
 
-  const url =
-    EMAIL_ENDPOINT +
-    "?page=" + encodeURIComponent(location.href) +
-    "&wishes=" + encodeURIComponent(text);
-
-  // gửi kiểu beacon bằng Image để tránh CORS
-  const img = new Image();
-  img.src = url;
+  try {
+    await fetch(EMAIL_ENDPOINT, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body:
+        "page=" + encodeURIComponent(location.href) +
+        "&wishes=" + encodeURIComponent(text),
+    });
+  } catch (e) {
+    console.error("Send mail failed", e);
+  }
 }
+
