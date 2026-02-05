@@ -1,4 +1,5 @@
-const EMAIL_ENDPOINT = "https://script.google.com/macros/s/AKfycbw_FUW4HxY0TSY4JJYxQRSfWiphHmhFMiJeH4Lc1o-wlPZxEltjwJcGKUCsSn5Z2lHv/exec";
+const EMAIL_ENDPOINT =
+  "https://script.google.com/macros/s/AKfycbw_FUW4HxY0TSY4JJYxQRSfWiphHmhFMiJeH4Lc1o-wlPZxEltjwJcGKUCsSn5Z2lHv/exec";
 
 const cakeImg = document.getElementById("cakeImg");
 
@@ -10,7 +11,7 @@ const confirmBtn = document.getElementById("confirmWish");
 const endSceneEl = document.getElementById("endScene");
 const closeEndSceneBtn = document.getElementById("closeEndScene");
 
-// các nến đã tắt thật sự (đã bấm confirm)
+// các nến đã tắt thật sự (đã confirm)
 const offSet = new Set();
 
 // trạng thái "đang chọn" (đã đổi ảnh nhưng CHƯA confirm)
@@ -19,11 +20,12 @@ let pendingPrevKey = "0"; // để rollback nếu hủy
 
 // ===== Helpers =====
 function currentKeyFromSet(set) {
-  return ["1", "2", "3"].filter(id => set.has(id)).join("") || "0";
+  return ["1", "2", "3"].filter((id) => set.has(id)).join("") || "0";
 }
 
 function updateCakeImageByKey(key) {
-  cakeImg.src = `assets/cake_${key}.png`;
+  // thêm version nhỏ để tránh cache (optional, nhưng rất hữu ích khi deploy)
+  cakeImg.src = `assets/cake_${key}.png?v=1`;
 }
 
 function openModal() {
@@ -52,7 +54,6 @@ function hideEndScene() {
 function rollbackPending() {
   if (!pendingCandle) return;
 
-  // trả state về như cũ
   offSet.delete(pendingCandle.dataset.id);
   pendingCandle.classList.remove("pending");
   updateCakeImageByKey(pendingPrevKey);
@@ -66,12 +67,11 @@ function finalizePending() {
 
   pendingCandle.classList.remove("pending");
   pendingCandle.classList.add("off");
-
   pendingCandle = null;
 }
 
 // ===== Click nến: đổi ảnh + mở modal =====
-candles.forEach(btn => {
+candles.forEach((btn) => {
   btn.addEventListener("click", () => {
     if (btn.classList.contains("off")) return;
 
@@ -99,14 +99,14 @@ candles.forEach(btn => {
 });
 
 // ===== Confirm: giữ trạng thái + gửi mail + đủ 3 thì show end scene =====
-confirmBtn.addEventListener("click", () => {
+confirmBtn.addEventListener("click", async () => {
   // guard an toàn
   if (!pendingCandle) return;
 
   const wish = textarea.value.trim();
   if (!wish) return;
 
-  // Lưu lại 3 điều ước trong session (hoặc localStorage nếu bạn muốn giữ lâu)
+  // Lưu lại 3 điều ước trong session memory
   window.__WISHES__ = window.__WISHES__ || [];
   window.__WISHES__.push({ text: wish });
 
@@ -119,7 +119,11 @@ confirmBtn.addEventListener("click", () => {
 
   // nếu đủ 3 điều ước thì gửi 1 email tổng + show end scene
   if (offSet.size === 3) {
-    sendWishesEmail(window.__WISHES__).catch(console.error);
+    try {
+      await sendWishesEmail(window.__WISHES__);
+    } catch (e) {
+      console.error(e);
+    }
     setTimeout(showEndScene, 1200);
   }
 });
@@ -156,28 +160,50 @@ closeEndSceneBtn?.addEventListener("click", hideEndScene);
 
 // ===== Gửi email tổng 3 điều ước =====
 async function sendWishesEmail(wishes) {
-  if (!EMAIL_ENDPOINT || EMAIL_ENDPOINT.includes("/XXXX/")) return;
+  if (!EMAIL_ENDPOINT || EMAIL_ENDPOINT.includes("/XXXX/")) {
+    console.warn("Chưa set EMAIL_ENDPOINT /exec");
+    return;
+  }
 
+  // chống gửi nhiều lần trong 1 phiên
   if (sessionStorage.getItem("email_sent") === "1") return;
-  sessionStorage.setItem("email_sent", "1");
 
   const text = wishes
     .map((w, i) => `Điều ước ${i + 1}: ${w.text}`)
     .join("\n");
 
+  const body =
+    "page=" + encodeURIComponent(location.href) +
+    "&wishes=" + encodeURIComponent(text);
+
+  // 1) Ưu tiên POST fetch (mobile ổn hơn Image beacon)
   try {
     await fetch(EMAIL_ENDPOINT, {
       method: "POST",
       mode: "no-cors",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body:
-        "page=" + encodeURIComponent(location.href) +
-        "&wishes=" + encodeURIComponent(text),
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body,
+      // keepalive giúp iOS/Android “thả” request ổn hơn khi user đổi tab nhanh
+      keepalive: true,
     });
+
+    // chỉ set sau khi đã gọi fetch xong
+    sessionStorage.setItem("email_sent", "1");
+    return;
   } catch (e) {
-    console.error("Send mail failed", e);
+    console.warn("fetch POST failed, fallback to Image beacon", e);
+  }
+
+  // 2) Fallback: Image beacon (một số browser desktop ok)
+  try {
+    const url = EMAIL_ENDPOINT + "?" + body;
+    const img = new Image();
+    img.src = url;
+
+    // set sent (best effort)
+    sessionStorage.setItem("email_sent", "1");
+  } catch (e) {
+    console.error("Image beacon failed", e);
+    // đừng set email_sent nếu fail hẳn
   }
 }
-
