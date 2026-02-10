@@ -1,5 +1,5 @@
 const EMAIL_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbw_FUW4HxY0TSY4JJYxQRSfWiphHmhFMiJeH4Lc1o-wlPZxEltjwJcGKUCsSn5Z2lHv/exec";
+  "https://script.google.com/macros/s/AKfycbwEOqWmqtbsY2YN-A8NwjAk0t7iVamdDiww56gIB4GvYT6Pzm8Jhj1ALkN-cmTeK_9E/exec";
 
 const cakeImg = document.getElementById("cakeImg");
 
